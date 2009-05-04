@@ -1,0 +1,16 @@
+<h2><span class="g">Repo</span></h2>
+Below is a list of all the files in the repo... most of which is 686.<br />
+<?php
+$dir_path = './repo/';
+$dir_list = array();
+if ($handle = opendir($dir_path)) {
+while ($files = readdir($handle)) {
+if (preg_match("/^\./",$files)==0) $dir_list[] = $files; //echo $files.'<br />';
+}
+closedir($handle);
+asort($dir_list);
+foreach ($dir_list as $value) {
+echo ("<a href=\"/repo/$value\">$value</a>");
+}
+}
+?>

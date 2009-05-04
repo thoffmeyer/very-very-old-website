@@ -1,0 +1,6 @@
+<?
+$number = "15";
+$static = TRUE;
+$category = "1";
+include("cutenews/show_news.php");
+?>

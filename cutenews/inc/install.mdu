@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<style type="text/css">
+<!--
+a:active,a:visited,a:link {color: #446488; text-decoration: none; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;}
+a:hover {color: #00004F; text-decoration: none; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;}
+.bborder        { background-color: #FFFFFF; border: 1px #A7A6B4 solid; }
+BODY {text-decoration: none; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;}
+TD {text-decoration: none; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;}
+.header { font-size : 16px; font-weight: bold; color: #808080; font-family: verdana; text-decoration: none; }
+-->
+</style>
+        <title>Cute News v1.4.6 Installer</title>
+</head>
+<body>
+<center>
+<table width="642" border="0" cellspacing="0" cellpadding="2">
+<tr><td class="bborder" bgcolor="#FFFFFF" width="777">
+<form method=post action="<?PHP echo $PHP_SELF; ?>">
+<table border=0 cellpadding=0 cellspacing=0 bgcolor="#ffffff" width="746" height="9">
+<tr><td bgcolor="#FFFFFF" width="746" colspan="2" height="15">&nbsp;</td>
+</tr><tr><td bgcolor="#000000" width="903" colspan="2" height="1"><img src="skins/images/blank.gif" width=1 height=1></td>
+</tr><tr><td bgcolor="#F7F6F4" width="903" colspan="2" height="18">
+<font size="2"><b>&nbsp;&nbsp; Cute News v1.4.6 Installer</b></font>        </td>
+</tr><tr><td bgcolor="#000000" width="903" colspan="2" height="1"><img src="skins/images/blank.gif" width=1 height=1></td>
+</tr><tr><td bgcolor="#FFFFFF" width="51" height="28">
+&nbsp;<br />
+<img border="0" src="skins/images/info.gif" width="60" height="57">
+</td><td bgcolor="#FFFFFF" width="695" height="28">
+&nbsp;<br />
+<?PHP
+
+$my_path = dirname(__FILE__);
+$my_path = str_replace("\\", "/", substr($my_path, 0, -3));
+if(!file_exists($my_path.'index.php')){
+        $my_path = './';
+}
+
+// ********************************************************************************
+// CHMOD Check
+// ********************************************************************************
+if($action == "chmod_check")
+{
+        echo'<div class="header"> Checking File and Folder Permissions</div><br />
+        statistic for <b>important</b> files that must be CHMOD\'ed and writable</td></tr></center>
+        <tr>
+
+      <td bgcolor="#FFFFFF" width="51" height="5">
+&nbsp;</td><td bgcolor="#FFFFFF" width="695" height="5">
+<table width="673" height="100%" cellpadding="0">
+  <td width="667" colspan="3">&nbsp;
+  <tr>
+    <td width="303" bgcolor="#F7F6F4" > &nbsp;File / Folder
+    <td bgcolor="#F7F6F4" width="150" >Current CHMOD value
+    <td bgcolor="#F7F6F4" width="210" >Status
+  </tr>';
+  $important_files = array(
+//                            'index.php',  -> not important ?!? :|
+                                                          'data/',
+                           );
+
+
+
+   if(!$handle = opendir("./data")){ die("<center>Can not open directory ./data "); }
+   while (false !== ($file = readdir($handle))){
+        if($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'emoticons' and $file != 'index.html'){
+            $important_files[] = "data/$file";
+    }
+   }
+        closedir($handle);
+
+
+    $chmod_errors = 0;
+    $not_found_errors = 0;
+    foreach($important_files as $file){
+        $file_name = $my_path . $file;
+
+        if(!file_exists($file_name)){
+                $file_status = "<font color=red>not found, check if it is uploaded !</font>";
+            $not_found_errors ++;
+        }
+        elseif(is_writable($file_name)){
+                $file_status = "<font color=green>Writable</font>";
+        }
+        else{
+            @chmod("$file_name", 0777);
+            if(is_writable($file_name)){
+                    $file_status = "<font color=green>Writable</font>";
+                        }else{
+                    @chmod("$file_name", 0755);
+                                if(is_writable($file_name)){
+                            $file_status = "<font color=green>Writable</font>";
+                }else{
+                                        $file_status = "<font color=red>Not Writable</font>";
+                        $chmod_errors ++;
+                }
+                        }
+        }
+            $chmod_value = @decoct(@fileperms($my_path . $file)) % 1000;
+
+        echo"<tr>
+                 <td>&nbsp;$file_name</td>
+             <td>&nbsp; $chmod_value</td>
+             <td>&nbsp; $file_status</td>
+                 </tr>";
+    }
+
+    if($chmod_errors == 0 and $not_found_errors == 0){
+            $status_report = 'The check was completed successfully and no errors were encountered, you may now continue to the final step of the the installation';
+    }else{
+            if($chmod_errors > 0){
+                    $status_report = "<font size=5 color=red>Warning !!!</font> during the permissions check, <b>$chmod_errors</b> of the files were not writable, you should now <a href='http://cutephp.com/forum/index.php?showtopic=81' title='How To CHMOD ?' target=_blank>CHMOD</a> them to 777 using your FTP program.<br>(basically the files that must be CHMODed are index.php and all files and folders in the data/ directory) <a href='http://cutephp.com/forum/index.php?showtopic=81' title='How To CHMOD ?' target=_blank>(how do I CHMOD?)</a><br><br>Proceeding with installation is <font color=red size=2><b>NOT</b></font> reccomended.<br>";
+            }
+            if($not_found_errors > 0){
+                    $status_report .= "<font size=5 color=red>Warning !!!</font> during the permissions check, <b>$not_found_errors</b> of the files were not found, make sure you uploaded them in the correct folder.<br><br>Proceeding with installation is <font color=red size=2><b>NOT</b></font> reccomended.<br>";
+            }
+        }
+
+        echo"<tr>
+            <td>&nbsp;<br>&nbsp;</td>
+            <td></td>
+            <td></td>
+        </tr><tr bgcolor='#F7F6F4'>
+            <td bgcolor='#F7F6F4'>Overal Status Report</td>
+            <td></td>
+            <td></td>
+        </tr><tr>
+            <td style=\"padding:5\" colspan=2>$status_report</td>
+
+        </tr>";
+
+  echo'</table>  </td>
+        </tr>
+        <input type=hidden name=action value=doconfig>
+    <tr>
+    <td bgcolor="#FFFFFF" width="51" height="10">
+        &nbsp;</td><td bgcolor="#FFFFFF" width="695" height="10">
+        <p align="right">
+        &nbsp;<input type=submit value="Proceed Installation >>">';
+}
+// ********************************************************************************
+// Do Configure
+// ********************************************************************************
+elseif($action == "doconfig")
+{
+
+        $url  = preg_replace( "'/index.php'", "", $_SERVER['HTTP_REFERER']);
+        $url  = preg_replace( "'\?(.*)'", "", $url);
+    if(substr("$url", -1) == "/"){ $url = substr($url, 0, -1); }
+
+
+        echo'<div class="header"> Important Configurations</div><br />
+        Please fill the required information correct for the script to work properly</td></tr></center>
+        <tr>
+      <td bgcolor="#FFFFFF" width="51" height="5">
+&nbsp;</td><td bgcolor="#FFFFFF" width="695" height="5">
+<table width="673" height="100%" cellpadding="0">
+  <td width="671" colspan="2">&nbsp;
+  <tr>
+    <td width="222" bgcolor="#F7F6F4" > &nbsp;Full URL to Cute News directory:
+    <td bgcolor="#F7F6F4" ><input name=url value="'.$url.'" size=38 type=text>
+      must start with <strong>http://</strong>
+  </tr>
+  <tr>
+    <td >
+    &nbsp;
+    <td >
+  </tr>
+  <tr>
+    <td  bgcolor="#F7F6F4">
+    &nbsp;Administrator Username:
+    <td  bgcolor="#F7F6F4">
+  <input type=text size="28" name="reg_username" >
+  </tr>
+  <tr>
+    <td  bgcolor="#F7F6F4">
+    &nbsp;Password:
+    <td  bgcolor="#F7F6F4">
+  <input type=password size="28" name="reg_password1"> please do <b> NOT</b> loose your password
+  </tr>
+  <tr>
+    <td  bgcolor="#F7F6F4">
+    &nbsp;Retype Password:
+    <td  bgcolor="#F7F6F4">
+  <input type=password size="28" name="reg_password2">
+  </tr>
+  <tr>
+    <td  bgcolor="#F7F6F4">
+    &nbsp;Nickname
+    <td  bgcolor="#F7F6F4">
+  <input type=text size="28" name="reg_nickname"> (optional)
+  </tr>
+  <tr>
+    <td  bgcolor="#F7F6F4">
+    &nbsp;Email
+    <td  bgcolor="#F7F6F4">
+  <input type=text size="28" name="reg_email">
+  </tr>
+  <tr>
+    <td >
+    &nbsp;
+    <td >
+  </tr>
+</table>  </td>
+</tr>
+<input type=hidden name=action value=doinstall>
+    <tr>
+  <td bgcolor="#FFFFFF" width="51" height="10">
+        &nbsp;</td><td bgcolor="#FFFFFF" width="695" height="10">
+        <p align="right">
+        &nbsp;<input type=submit value="Proceed Installation >>">
+';
+}
+// ********************************************************************************
+// Do Install
+// ********************************************************************************
+elseif($action == "doinstall")
+{
+        if(!$reg_username or !$reg_password1 or !$url or $reg_password1 != $reg_password2 ){ die("Error !!!<br /> You didn't fill some required field or the passwords did not match"); }
+        $reg_password = md5($reg_password1);
+
+        $users_file = fopen("./data/users.db.php", "w") or die("Sorry but installer can not write to file <b>./data/users.db.php</b>,<br />please check if file exist and if it is properly CHMOD`ed");
+        fwrite($users_file, "<?PHP die(\"You don't have access to open this file !!!\"); ?>\n");
+        fwrite($users_file, time()."|1|$reg_username|$reg_password|$reg_nickname|$reg_email|0|0||||\n");
+        fclose($users_file);
+
+$config = <<<HTML
+<?PHP
+
+//System Configurations
+
+\$config_http_script_dir = "$url";
+
+\$config_skin = "default";
+
+\$config_date_adjust = "0";
+
+\$config_smilies = "smile,wink,wassat,tongue,laughing,sad,angry,crying";
+
+\$config_auto_archive = "no";
+
+\$config_allow_registration = "no";
+
+\$config_registration_level = "4";
+
+\$config_use_avatar = "no";
+
+\$config_use_wysiwyg = "no";
+
+\$config_reverse_active = "no";
+
+\$config_timestamp_active = "d M Y";
+
+\$config_full_popup = "no";
+
+\$config_full_popup_string = "HEIGHT=400,WIDTH=650,resizable=yes,scrollbars=yes";
+
+\$config_show_comments_with_full = "yes";
+
+\$config_auto_wrap = "44";
+
+\$config_reverse_comments = "no";
+
+\$config_flood_time = "15";
+
+\$config_comment_max_long = "1500";
+
+\$config_comments_per_page = "50";
+
+\$config_only_registered_comment = "no";
+
+\$config_allow_url_instead_mail = "yes";
+
+\$config_timestamp_comment = "d M Y h:i a";
+
+\$config_comments_popup = "no";
+
+\$config_comments_popup_string = "HEIGHT=400,WIDTH=650,resizable=yes,scrollbars=yes";
+
+\$config_show_full_with_comments = "yes";
+
+\$config_notify_email = "$reg_email";
+
+\$config_notify_status = "disabled";
+
+\$config_notify_registration = "no";
+
+\$config_notify_comment = "no";
+
+\$config_notify_unapproved = "no";
+
+\$config_notify_archive = "no";
+
+\$config_notify_postponed = "no";
+
+?>
+HTML;
+
+
+        $con_file = fopen("./data/config.php", "w") or die("Sorry but installer can not write to file <b>./data/config.php</b>,<br />please check if file exist and if it is properly CHMOD`ed");
+        fwrite($con_file, $config);
+        fclose($con_file);
+
+    $path = str_replace( '\\', '/', getcwd() );
+    echo'<div class="header"> Installation Finished</div><br />
+        CuteNews was successfully installed.</td></tr></center>
+        <tr>
+          <td bgcolor="#FFFFFF" width="51" height="5">
+        &nbsp;</td><td bgcolor="#FFFFFF" width="695" height="5">
+        <p align="center"><br />
+        <br />
+    It is recommended that you read the CuteNews README.htm file where is explained how to show news on your page.<br>
+        You can get the code that you must use to include (show) your news by<br>
+        going to <b>CuteNews -&gt; Options -&gt; Integration Wizards</b><br>
+        <br>
+        You can now go to CuteNews <a href="index.php">login page</a>.
+    ';
+}
+// ********************************************************************************
+// Start Installation Wizard
+// ********************************************************************************
+else{
+        echo'<div class="header"> Welcome to Cute News v1.4.6 installer</div><br />
+        This wizard will guide you through all installation steps and will help you configure the script</td></tr></center>
+        <tr>
+          <td bgcolor="#FFFFFF" width="51" height="5">
+        &nbsp;</td><td bgcolor="#FFFFFF" width="695" height="5">
+        </td>
+        </tr>
+    <input type=hidden name=action value="chmod_check">
+    <tr>
+  <td bgcolor="#FFFFFF" width="51" height="10">
+        &nbsp;</td><td bgcolor="#FFFFFF" width="695" height="10">
+        <p align="right">
+        &nbsp;<input type=submit value="Proceed Installation >>">
+    ';
+}
+
+?>
+&nbsp; &nbsp &nbsp;<br />&nbsp;</p>
+</td>
+</tr>
+</table></form></td></tr></table></body></html>

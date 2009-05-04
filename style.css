@@ -1,0 +1,92 @@
+* {
+  padding: 0;
+  margin: 0;
+} 
+
+body { 
+  font: .8em "Trebuchet MS", Verdana, Arial, Sans-Serif;  
+  background-color: #000;
+}
+
+
+a {
+  text-decoration: none;
+  color: #8ACA3B;
+}
+a:hover { color: #000; }
+
+#wrap 
+{
+  margin: 20px auto;
+  width: 500px;
+  padding: 10px;
+  background-color: #333333;
+}
+
+
+#header 
+{
+  height : 90px;
+  background-color : #000;
+  background: url(/images/back.png);
+}
+#header h1 { padding-left: 10px; padding-top: 12px; font-size: 25px; color: #FFF; }
+#header h1 a { font-size: 25px; color: #FFF; text-decoration: none;}
+#header h2 { padding-left: 10px; padding-top: 0px; font-size: 19px; color: #8ACA3B; }
+
+#menu {
+  text-align: right;
+  margin-top: 10px;
+  font-size : 14px;
+  font-weight: 600;
+  border: 1px solid #464646; 
+  background: #3A3A3A;
+}
+
+#menu a {
+  color : #8ACA3B;
+  text-decoration : none;
+  padding: 10px;
+}
+#menu a:hover {
+  color : #000;
+}
+
+
+#content { 
+  text-align: left;
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 14px;
+  color: #777;
+}
+#content h2 { font-size: 15px; color: #8ACA3B; }
+
+#footer { 
+  margin-top: 25px; 
+  clear: both;
+  text-align: center; 
+  color: #777; 
+}
+
+.g {
+color: #8ACA3B;
+}
+
+.imgright {
+float: right;
+margin: 0 0 5px 10px;
+}
+
+.imgleft {
+float: left;
+margin: 5px 10px 0 0;
+}
+
+hr {
+color: #8ACA3B; 
+border: 1px dotted #8ACA3B;
+border-style: none none dotted;
+margin: 3px 0px 3px 0px;
+width: 50%;
+}
